@@ -4,7 +4,7 @@
 import pkg_resources
 from typing import Mapping, Optional, Sequence, Tuple, Union
 
-from google.api_core import gapic_v1
+from google.api_core import gapic_v2
 from google.api_core import retry
 from google.auth import credentials
 
@@ -78,7 +78,7 @@ class {{ service.name }}:
 
         # Wrap the RPC method; this adds retry and timeout information,
         # and friendly error handling.
-        rpc = gapic_v1.method.wrap_method(
+        rpc = gapic_v2.method.wrap_method(
             self._transport.{{ method.name|snake_case }},
             default_retry=None,  # FIXME
             default_timeout=None,  # FIXME
@@ -89,7 +89,7 @@ class {{ service.name }}:
         # Certain fields should be provided within the metadata header;
         # add these here.
         metadata = tuple(metadata) + (
-            gapic_v1.routing_header.to_grpc_metadata({
+            gapic_v2.routing_header.to_grpc_metadata({
                 {%- for field_header in method.field_headers %}
                 '{{ field_header }}': request.{{ field_header }},
                 {%- endfor %}
@@ -158,14 +158,14 @@ class {{ service.name }}:
     {% endfor -%}
 
     @property
-    def client_info(self) -> gapic_v1.client_info.ClientInfo:
+    def client_info(self) -> gapic_v2.client_info.ClientInfo:
         """Return information about this client (for metrics).
 
         Returns:
             client_info.ClientInfo: An object with metadata about this
                 client library.
         """
-        return gapic_v1.client_info.ClientInfo()
+        return gapic_v2.client_info.ClientInfo()
 
 
 __all__ = (

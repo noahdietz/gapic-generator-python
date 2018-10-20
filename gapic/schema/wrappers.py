@@ -329,7 +329,7 @@ class OperationType:
     alongside :class:`~.MessageType` instances.
     """
     lro_response: MessageType
-    lro_metadata: MessageType = None
+    lro_metadata: MessageType
 
     @property
     def ident(self) -> metadata.Address:
@@ -339,20 +339,19 @@ class OperationType:
     def meta(self) -> metadata.Metadata:
         """Return a Metadata object."""
         return metadata.Metadata(
-            address=metadata.Address(
+            address=dataclasses.replace(self.lro_response.meta.address,
                 name='Operation',
                 module='operation',
                 package=('google', 'api_core'),
-                collisions=self.lro_response.meta.address.collisions,
             ),
             documentation=descriptor_pb2.SourceCodeInfo.Location(
                 leading_comments='An object representing a long-running '
-                                 'operation. \n\n'
-                                 'The result type for the operation will be '
-                                 ':class:`{ident}`: {doc}'.format(
-                                     doc=self.lro_response.meta.doc,
-                                     ident=self.lro_response.ident.sphinx,
-                                 ),
+                    'operation.\n\n'
+                    'The result type for the operation will be '
+                    ':class:`{ident}`: {doc}'.format(
+                        doc=self.lro_response.meta.doc,
+                        ident=self.lro_response.ident.sphinx,
+                    ),
             ),
         )
 

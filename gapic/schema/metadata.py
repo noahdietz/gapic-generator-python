@@ -102,15 +102,6 @@ class Address:
     @cached_property
     def python_import(self) -> imp.Import:
         """Return the Python import for this type."""
-        # If there is no naming object, this is a special case for operation.
-        # FIXME(#34): OperationType does not work well. Fix or expunge it.
-        if not self.api_naming:
-            return imp.Import(
-                package=self.package,
-                module=self.module,
-                alias=self.module_alias,
-            )
-
         # If this is part of the proto package that we are generating,
         # rewrite the package to our structure.
         if self.proto_package.startswith(self.api_naming.proto_package):
@@ -126,7 +117,10 @@ class Address:
         # Return the standard import.
         return imp.Import(
             package=self.package,
-            module=f'{self.module}_pb2',
+            # FIXME(#61): Release common protos beta with non-pb2 modules,
+            #   then make this only append _pb2 for `google.protobuf`.
+            module=f'{self.module}_pb2'
+                if self.module != 'operation' else self.module,
             alias=self.module_alias if self.module_alias else self.module,
         )
 
